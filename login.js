@@ -22,10 +22,10 @@ const CONFIG = {
   selectors: {
     email: 'input[id="email"], input[type="email"]',
     password: 'input[id="password"], input[type="password"]',
-    submit: 'button:has-text("登录"), input[type="submit"]',
-    personalCenter: 'a:has-text("个人中心")',
+    submit: 'button:has-text("Login"), input[type="submit"]',
+    personalCenter: 'a:has-text("Profile")',
     navLinksFallback: '.min-h-screen header nav a',
-    redeemEntry: 'button:has-text("兑换")',
+    redeemEntry: 'button:has-text("Redeem")',
     redeemEntryFallback: 'main .rounded-lg button',
     giftCodeInput: '#gift_card_code',
     redeemConfirmGroup: 'div.space-y-4 button.inline-flex',
