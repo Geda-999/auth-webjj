@@ -168,19 +168,19 @@ class NetlibAccountBot {
 
   async login() {
     const { page, user, pass } = this;
-    console.log(`📱 ${user} - 正在访问网站...`);
+    console.log(`📱 - 正在访问网站...`);
     await page.goto(CONFIG.loginURL, { waitUntil: 'networkidle' });
     await wait(page, 3000);
 
-    console.log(`📝 ${user} - 填写用户名...`);
+    console.log(`📝 - 填写用户名...`);
     await page.fill(CONFIG.selectors.email, user);
     await wait(page, 1000);
 
-    console.log(`🔒 ${user} - 填写密码...`);
+    console.log(`🔒 - 填写密码...`);
     await page.fill(CONFIG.selectors.password, pass);
     await wait(page, 1000);
 
-    console.log(`📤 ${user} - 提交登录...`);
+    console.log(`📤 - 提交登录...`);
     await page.click(CONFIG.selectors.submit);
     await page.waitForLoadState('networkidle');
     await wait(page, 5000);
@@ -190,7 +190,7 @@ class NetlibAccountBot {
     if (!success) {
       throw new Error('登录后页面未检测到成功标识，可能账号密码错误或页面结构变化');
     }
-    console.log(`✅ ${user} - 登录成功`);
+    console.log(`✅ - 登录成功`);
   }
 
   /** 通用的「文本优先 + 索引兜底」点击逻辑，替代原来重复的 if/else 代码块 */
@@ -236,7 +236,7 @@ class NetlibAccountBot {
   }
 
   async fillCode() {
-    console.log(`✅ ${this.user} - 填写兑换码`);
+    console.log(`✅ - 填写兑换码`);
     await this.page.locator(CONFIG.selectors.giftCodeInput).fill(this.code);
     await wait(this.page, 2000);
   }
@@ -285,7 +285,7 @@ async function processAccount({ user, pass }, code) {
   let lastError = null;
 
   for (let attempt = 1; attempt <= CONFIG.retryPerAccount; attempt++) {
-    console.log(`\n🚀 [${user}] 第 ${attempt}/${CONFIG.retryPerAccount} 次尝试`);
+    console.log(`\n🚀  第 ${attempt}/${CONFIG.retryPerAccount} 次尝试`);
 
     const browser = await chromium.launch({
       headless: true,
@@ -303,7 +303,7 @@ async function processAccount({ user, pass }, code) {
       return { user, success: true, message: `✅ ${user} 登录并兑换成功` };
     } catch (e) {
       lastError = e;
-      console.log(`❌ [${user}] 第 ${attempt} 次尝试失败: ${e.message}`);
+      console.log(`❌  第 ${attempt} 次尝试失败: ${e.message}`);
       if (page) await takeFailureScreenshot(page, user, attempt);
     } finally {
       if (page) await page.close().catch(() => {});
@@ -353,7 +353,7 @@ async function main() {
 
   const results = [];
   for (let i = 0; i < accounts.length; i++) {
-    console.log(`\n📋 处理第 ${i + 1}/${accounts.length} 个账号: ${accounts[i].user}`);
+    console.log(`\n📋 处理第 ${i + 1}/${accounts.length} 个账号`);
     results.push(await processAccount(accounts[i], code));
 
     if (i < accounts.length - 1) {
@@ -367,7 +367,7 @@ async function main() {
   summary += results.map((r) => r.message).join('\n');
 
   await notifier.send(summary);
-  console.log('\n📊 最终结果:\n', summary);
+  // console.log('\n📊 最终结果:\n', summary);
 
   if (successCount < results.length) {
     process.exitCode = 1; // 有账号失败时返回非 0 退出码，方便 CI 识别
