@@ -1,0 +1,75 @@
+# 工作流名称：Netlib 
+name: Netlib Keepalive
+
+# 工作流触发条件配置
+on:
+  # 定时任务调度（使用 cron 表达式）
+  schedule:
+    # cron 表达式格式：分钟 小时 日 月 星期
+    # '0 0 */30 * *' 表示：
+    #   - 0 分钟（每小时的第0分钟）
+    #   - 0 小时（UTC时间的0点，即北京时间早上8点）
+    #   - */30 天（每30天的倍数，即每30天执行一次）
+    #   - * 月（每月）
+    #   - * 星期（每周的任何一天）
+    # 注意：GitHub Actions 使用 UTC 时间，0:0 UTC 对应北京时间 8:00
+    - cron: '0 */12 * * *'  # 每30天运行一次（UTC时间0点，即北京时间早上8点）
+  
+  # 允许在 GitHub Actions 界面手动触发工作流
+  # 可以在仓库的 Actions 标签页中点击 "Run workflow" 按钮手动执行
+  workflow_dispatch:  # 允许手动运行
+
+# 工作流任务定义
+jobs:
+  # 任务名称：自动登录 Netlib
+  auto_login_netlib:
+    # 指定运行环境：使用最新的 Ubuntu Linux 系统
+    # ubuntu-latest 是 GitHub 提供的免费运行器，包含常用的开发工具
+    runs-on: ubuntu-latest
+    
+    # 任务步骤序列：按顺序执行以下步骤
+    steps:
+      # 步骤1：检出代码仓库
+      # 将仓库代码下载到运行器的文件系统中，以便后续步骤可以使用
+      - name: Checkout
+        # 使用官方 checkout action（v4版本）
+        # 这会克隆仓库代码到 $GITHUB_WORKSPACE 目录
+        uses: actions/checkout@v4
+
+      # 步骤2：设置 Node.js 环境
+      # login.js 仅使用 Node 内置 fetch，无需 npm 依赖
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # 步骤3：运行登录脚本
+      # 执行实际的自动登录逻辑
+      - name: Run login script
+        # 设置环境变量，从 GitHub Secrets 中读取敏感信息
+        # GitHub Secrets 是加密存储的配置，不会在日志中暴露
+        env:
+          # Telegram Bot Token：用于发送通知消息的机器人令牌
+          # 需要在 GitHub 仓库设置中配置 secrets.BOT_TOKEN
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          
+          # Telegram Chat ID：接收通知消息的聊天 ID
+          # 需要在 GitHub 仓库设置中配置 secrets.CHAT_ID
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+          
+          # 账号信息：格式为 "用户名1:密码1,用户名2:密码2"
+          # 支持多个账号，使用逗号或分号分隔
+          # 需要在 GitHub 仓库设置中配置 secrets.ACCOUNTS
+          # 注意：账号密码以明文形式存储在 Secrets 中，请确保仓库是私有的
+          ACCOUNTS: ${{ secrets.ACCOUNTS }}
+          # 账号 URL：格式为 "URL1,URL2"
+          URLS: ${{ secrets.URLS }}
+          # 兑换码页面URL（如有，从Secrets或变量读取）
+          CODE_URL: ${{ secrets.CODE_URL }}
+          # 登录页面URL（如有，从Secrets或变量读取）
+          LOGIN_URL: ${{ secrets.LOGIN_URL }}
+          # 截图保存目录（如有覆盖需求，从Secrets或变量读取，否则使用默认 /tmp/netlib-screenshots）
+          SCREENSHOT_DIR: ${{ secrets.SCREENSHOT_DIR }}
+        
+        # 执行 login.js：通过 fetch 访问账号 URL 保活，并通过 Telegram 发送通知
+        run: npm start
