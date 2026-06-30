@@ -23,6 +23,7 @@ const CONFIG = {
     email: 'input[id="email"], input[type="email"]',
     password: 'input[id="password"], input[type="password"]',
     submit: 'button:has-text("Login"), input[type="submit"]',
+    // submit: 'document.querySelectorAll("form button.inline-flex")[0]',
     personalCenter: 'a:has-text("Profile")',
     navLinksFallback: '.min-h-screen header nav a',
     redeemEntry: 'button:has-text("Redeem")',
@@ -348,7 +349,8 @@ async function main() {
     process.exit(1);
   }
 
-  console.log('🎁 兑换码:', code);
+  // console.log('🎁 兑换码:', code);
+  console.log('🎁 兑换码:', '--');
   console.log(`🔍 发现 ${accounts.length} 个账号需要登录`);
 
   const results = [];
@@ -363,7 +365,7 @@ async function main() {
   }
 
   const successCount = results.filter((r) => r.success).length;
-  let summary = `📊 登录汇总: ${successCount}/${results.length} 个账号成功\n\n`;
+  let summary = `🎁 兑换码: ${code} \n 📊 登录汇总: ${successCount}/${results.length} 个账号成功\n\n`;
   summary += results.map((r) => r.message).join('\n');
 
   await notifier.send(summary);
