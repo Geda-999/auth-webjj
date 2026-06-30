@@ -4,5 +4,9 @@
   "main": "login.js",
   "scripts": {
     "start": "node login.js"
+  },
+  "dependencies": {
+    "axios": "latest",
+    "playwright": "latest"
   }
 }

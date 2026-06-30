@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const { chromium } = require('playwright');
 
 // ========================= 配置区 =========================
@@ -143,15 +144,11 @@ class TelegramNotifier {
     const fullMessage = `🎉 Netlib 登录通知\n\n登录时间：${timeStr}\n\n${message}`;
 
     try {
-      await fetch(`https://api.telegram.org/bot${this.token}/sendMessage`, {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: this.chatId,
-          text: fullMessage
-        }),
-        signal: AbortSignal.timeout(10000)
-      });
+      await axios.post(
+        `https://api.telegram.org/bot${this.token}/sendMessage`,
+        { chat_id: this.chatId, text: fullMessage },
+        { timeout: 10000 }
+      );
       console.log('✅ Telegram 通知发送成功');
     } catch (e) {
       console.log(`⚠️ Telegram 发送失败: ${e.message}`);
