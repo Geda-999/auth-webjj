@@ -269,18 +269,18 @@ class NetlibAccountBot {
 
 // ========================= 账号处理 + 重试 + 失败截图 =========================
 
-async function takeFailureScreenshot(page, user, attempt) {
-  try {
-    if (!fs.existsSync(CONFIG.screenshotDir)) {
-      fs.mkdirSync(CONFIG.screenshotDir, { recursive: true });
-    }
-    const filePath = path.join(CONFIG.screenshotDir, `${user}-attempt${attempt}-${Date.now()}.png`);
-    await page.screenshot({ path: filePath, fullPage: true });
-    console.log(`🖼️ 已保存失败截图: ${filePath}`);
-  } catch (e) {
-    console.warn(`⚠️ 截图保存失败: ${e.message}`);
-  }
-}
+// async function takeFailureScreenshot(page, user, attempt) {
+//   try {
+//     if (!fs.existsSync(CONFIG.screenshotDir)) {
+//       fs.mkdirSync(CONFIG.screenshotDir, { recursive: true });
+//     }
+//     const filePath = path.join(CONFIG.screenshotDir, `${user}-attempt${attempt}-${Date.now()}.png`);
+//     await page.screenshot({ path: filePath, fullPage: true });
+//     console.log(`🖼️ 已保存失败截图: ${filePath}`);
+//   } catch (e) {
+//     console.warn(`⚠️ 截图保存失败: ${e.message}`);
+//   }
+// }
 
 async function processAccount({ user, pass }, code) {
   let lastError = null;
@@ -305,7 +305,7 @@ async function processAccount({ user, pass }, code) {
     } catch (e) {
       lastError = e;
       console.log(`❌  第 ${attempt} 次尝试失败: ${e.message}`);
-      if (page) await takeFailureScreenshot(page, user, attempt);
+      // if (page) await takeFailureScreenshot(page, user, attempt);
     } finally {
       if (page) await page.close().catch(() => {});
       await browser.close().catch(() => {});
