@@ -251,11 +251,52 @@ class NetlibAccountBot {
     console.log('✅ 已点击兑换确认按钮，等待5秒');
     await wait(page, 5000);
 
+    // 已废
+    // const finalButtons = await page.$$(CONFIG.selectors.finalConfirmGroup);
+    // if (finalButtons.length <= 2) throw new Error('未找到预期的最终确认按钮');
+    // await finalButtons[2].click();
+    // console.log('✅ 已点击最终确认按钮，等待5秒');
+    // await wait(page, 5000);
+
+    // 方案1
     const finalButtons = await page.$$(CONFIG.selectors.finalConfirmGroup);
-    if (finalButtons.length <= 2) throw new Error('未找到预期的最终确认按钮');
-    await finalButtons[2].click();
-    console.log('✅ 已点击最终确认按钮，等待5秒');
-    await wait(page, 5000);
+    try{
+      await finalButtons[finalButtons.length].click();
+      console.log('✅ 已点击最终确认按钮，等待5秒');
+      await wait(page, 5000);
+    }catch(e){
+      throw new Error('未找到预期的最终确认按钮');
+    }
+
+    // 方案2
+    // const finalButtons = await page.$$(CONFIG.selectors.finalConfirmGroup);
+    // if (finalButtons.length <= 2) {
+    //   await finalButtons[2].click();
+    //   console.log('✅ 已点击最终确认按钮，等待5秒');
+    //   await wait(page, 5000);
+    // } else if (finalButtons.length <= 1){
+    //   console.warn('⚠️ 未找到预期最终确认按钮，尝试点击第一个');
+    //   await finalButtons[1].click();
+    //   console.log('✅ 已点击最终确认按钮，等待5秒');
+    //   await wait(page, 5000);      
+    // }else{
+    //   throw new Error('未找到预期的最终确认按钮')
+    // }
+    
+
+
+    // 方案3
+    // const finalButtons = await page.$$(CONFIG.selectors.finalConfirmGroup);
+    // if (finalButtons.length <= 2) {
+    //   console.warn('⚠️ 未找到预期最终确认按钮，尝试点击第一个');
+    //   await finalButtons[1].click();
+    //   console.log('✅ 已点击最终确认按钮，等待5秒');
+    //   await wait(page, 5000);
+    //   return;
+    // };
+    // await finalButtons[2].click();
+    // console.log('✅ 已点击最终确认按钮，等待5秒');
+    // await wait(page, 5000);
   }
 
   async run() {
