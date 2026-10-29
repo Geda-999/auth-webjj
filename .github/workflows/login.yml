@@ -19,17 +19,32 @@ on:
   # 可以在仓库的 Actions 标签页中点击 "Run workflow" 按钮手动执行
   workflow_dispatch:  # 允许手动运行
 
-  # 用户 push 到 master 时执行
-  push:
-    branches:
-      - master
+  # 1🎈
+  # 现在只会在这两种情况下执行：
+  # 定时（schedule，每 12 小时）
+  # 手动（Actions 页点 Run workflow）
+  # 推代码到远端不会再自动跑。若以后想「改了某文件才跑」，再加回类似这样即可：
+  # push:
+  #   branches: [master]
+  #   paths:
+  #     - 'login.js'
+  #     - 'package.json'
 
-    # 忽略脚本自己生成的文件
-    # 防止 Actions 自己 push 后再次触发
-    paths-ignore:
-      #- 'data/sub.txt'
-      # - 'data/**'
-      - 'README.md'
+  # 2🎈
+  # # 用户 push 到 master 时执行
+  # push:
+  #   branches:
+  #     - master
+  #   # 忽略脚本自己生成的文件
+  #   # 防止 Actions 自己 push 后再次触发
+  #   paths-ignore:
+  #     #- 'data/sub.txt'
+  #     # - 'data/**'
+  #     - 'README.md'
+
+  # 3🎈
+  # # 不写 push：推送/部署到远端后不会自动跑；需要时在 Actions 里手动 Run
+  # # 若以后想「改了某些文件才跑」，可再加回 push + paths 过滤
 
 
 # 允许 GitHub Actions 修改仓库内容
