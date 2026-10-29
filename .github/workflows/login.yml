@@ -19,6 +19,24 @@ on:
   # 可以在仓库的 Actions 标签页中点击 "Run workflow" 按钮手动执行
   workflow_dispatch:  # 允许手动运行
 
+  # 用户 push 到 master 时执行
+  push:
+    branches:
+      - master
+
+    # 忽略脚本自己生成的文件
+    # 防止 Actions 自己 push 后再次触发
+    paths-ignore:
+      #- 'data/sub.txt'
+      # - 'data/**'
+      - 'README.md'
+
+
+# 允许 GitHub Actions 修改仓库内容
+permissions:
+  contents: write
+
+
 # 工作流任务定义
 jobs:
   # 任务名称：自动登录 Netlib
@@ -90,3 +108,27 @@ jobs:
         
         # 执行 login.js：通过 fetch 访问账号 URL 保活，并通过 Telegram 发送通知
         run: npm start
+
+
+      # 新增：更新 README 时间戳并清理旧日志
+      - name: Update README Timestamp
+        run: |
+          # 设置时区为东八区（北京时间）
+          export TZ='Asia/Shanghai'
+          CURRENT_TIME=$(date "+%Y-%m-%d %H:%M:%S")
+
+          sed -i '/更新于/d' README.md
+          echo -e "更新于 $CURRENT_TIME" >> README.md
+
+
+      # ==========================================
+      # 4. 提交并 Push（每次都会更新 README 时间戳）
+      # ==========================================
+      - name: Commit & Push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .
+          git commit -m "chore: ..."
+          git push
